@@ -1,0 +1,36 @@
+name: Recover official test score
+on:
+  push:
+    branches:
+      - score-recovery
+    paths:
+      - score-recovery-bundle.zip
+      - .github/workflows/score-recovery.yml
+permissions:
+  contents: write
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Extract official package and saved predictions
+        run: |
+          mkdir /tmp/score-run
+          unzip -q score-recovery-bundle.zip -d /tmp/score-run
+          python -m pip install -r /tmp/score-run/requirements.txt
+      - name: Run the starter package scorer only
+        run: |
+          cd /tmp/score-run
+          python -m mp3_sql.score --split test --predictions outputs/test.json --output /tmp/test-score.json
+      - name: Save score JSON to this temporary branch
+        run: |
+          cp /tmp/test-score.json test-score-linux.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add test-score-linux.json
+          git commit -m "Record official Linux score JSON"
+          git push
