@@ -4,7 +4,7 @@ on:
     branches:
       - score-recovery
     paths:
-      - score-recovery-bundle.zip
+      - dase7506-mp3-score-recovery.zip
       - .github/workflows/score-recovery.yml
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
       - name: Extract official package and saved predictions
         run: |
           mkdir /tmp/score-run
-          unzip -q score-recovery-bundle.zip -d /tmp/score-run
+          unzip -q dase7506-mp3-score-recovery.zip -d /tmp/score-run
           python -m pip install -r /tmp/score-run/requirements.txt
       - name: Run the starter package scorer only
         run: |
